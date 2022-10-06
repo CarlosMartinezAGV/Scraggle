@@ -1,6 +1,7 @@
 package userInterface;
 
 import game.Game;
+import java.awt.*;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -63,7 +64,7 @@ public class ScraggleUi
         jframe = new JFrame("Scraggle");
         
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jframe.setSize(new Dimension(700, 600));          
+        jframe.setSize(new Dimension(1800,1600));          
   
         BorderLayout borderLayout = new BorderLayout();
         jframe.setLayout(borderLayout);
@@ -86,26 +87,27 @@ public class ScraggleUi
         jMenuBar.add(jmenu);
         
         //A JPanel should be created to hold the current word being created by the user
-        jpanel = new JPanel(new FlowLayout());
+        jpanel = new JPanel(new BorderLayout());
         
         jpanel.setBorder(BorderFactory.createTitledBorder("Current Word"));
-        jpanel.setPreferredSize(new Dimension(300,85));
-        
+        jpanel.setPreferredSize(new Dimension(300,260));
+            
         currentWordLabel = new JLabel();
-        currentWordLabel.setPreferredSize(new Dimension(250,50));
+        currentWordLabel.setPreferredSize(new Dimension(650,200));
         currentWordLabel.setBorder(BorderFactory.createTitledBorder("Current Word"));
         
         submitButton = new JButton("Submit Word");
-        submitButton.setPreferredSize(new Dimension(200,50));
+        submitButton.setPreferredSize(new Dimension(100,100));
         submitButton.addActionListener(new SubmitListener());
+        submitButton.setFont(new Font("Arial", Font.PLAIN, 50));
         
         scoreLabel = new JLabel();
-        scoreLabel.setPreferredSize(new Dimension(100,50));
+        scoreLabel.setPreferredSize(new Dimension(650,200));
         scoreLabel.setBorder(BorderFactory.createTitledBorder("Score"));
          
-        jpanel.add(currentWordLabel);
-        jpanel.add(submitButton);
-        jpanel.add(scoreLabel);
+        jpanel.add(currentWordLabel,BorderLayout.LINE_START);
+        jpanel.add(submitButton, BorderLayout.CENTER );
+        jpanel.add(scoreLabel, BorderLayout.LINE_END);
         
         //dice panel
         setupScragglePanel();
@@ -113,22 +115,22 @@ public class ScraggleUi
         //right panel
         rightPanel = new JPanel();
         rightPanel.setLayout(new GridLayout(3,1));
+        rightPanel.setPreferredSize(new Dimension(600,700));
         rightPanel.setBorder(BorderFactory.createTitledBorder("Enter Words Found"));
         
         rightText = new JTextArea();
-        rightText.setPreferredSize(new Dimension(100,25));
+        rightText.setPreferredSize(new Dimension(400,75));
         
         scrollPane = new JScrollPane(rightText);
         scrollPane.setPreferredSize(new Dimension(225,50)); 
         scrollPane.setHorizontalScrollBarPolicy(scrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(scrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         
-        
         rightPanel.add(scrollPane);
         
         timerLabel = new JLabel(MAX_INDEX + ":" + MIN_INDEX + MIN_INDEX, SwingConstants.CENTER);
         timerLabel.setBorder(BorderFactory.createTitledBorder("Time Left"));
-        timerLabel.setFont(new Font("Verdana", Font.PLAIN, 50));
+        timerLabel.setFont(new Font("Verdana", Font.PLAIN, 100));
         
         rightPanel.add(timerLabel);
         
@@ -136,6 +138,7 @@ public class ScraggleUi
         
         shakeDice = new JButton("Shake Dice");
         shakeDice.addActionListener(resetGameListener);
+        shakeDice.setFont(new Font("Arial", Font.PLAIN, 60));
         rightPanel.add(shakeDice);
     
         //timer
@@ -152,6 +155,7 @@ public class ScraggleUi
     {
         dicePanel = new JPanel(new GridLayout(4,4));
         dicePanel.setBorder(BorderFactory.createTitledBorder("Scraggle Board"));
+        dicePanel.setPreferredSize(new Dimension(600,600));
         
         jbutton2d = new JButton[GRID][GRID];
         
@@ -161,7 +165,10 @@ public class ScraggleUi
             {
                 URL imgPath = getClass().getResource(game.getGrid()[row][col].getImgPath());
                 ImageIcon icon = new ImageIcon(imgPath);
-                jbutton2d[row][col] = new JButton(icon);
+             
+                jbutton2d[row][col] = new JButton();
+                jbutton2d[row][col].setIcon(resizeIcon(icon, 310, 320));
+                //jbutton2d[row][col].setPreferredSize(new Dimension(500,500));
                 jbutton2d[row][col].putClientProperty("row",row);
                 jbutton2d[row][col].putClientProperty("col",col);
                 jbutton2d[row][col].putClientProperty("letter",game.getGrid()[row][col].getLetter());
@@ -174,6 +181,12 @@ public class ScraggleUi
                 dicePanel.add(jbutton2d[row][col]);
             }
         }
+    }
+    
+    private static Icon resizeIcon(ImageIcon icon, int resizedWidth, int resizedHeight) {
+    Image img = icon.getImage();  
+    Image resizedImage = img.getScaledInstance(resizedWidth, resizedHeight,  java.awt.Image.SCALE_SMOOTH);  
+    return new ImageIcon(resizedImage);
     }
     
     private void setupTimer()
